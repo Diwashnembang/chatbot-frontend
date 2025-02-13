@@ -46,16 +46,11 @@ export default function Chat() {
         return () => socket.off("response", handleResponse);
     }, [socket]);
 
-    useEffect(() => {
-        if(text[text.length - 1].owner === userId) {
-            setIsLoading(true);
-            socket?.emit("chat", { ...text[text.length-1], userId });
-        }
-    }, [text, userId]);
-
     const handleSend = () => {
         if (!message.trim()) return;
         setText(prev => [...prev, { owner: userId, text: message }]);
+        setIsLoading(true);
+        socket.emit("chat",text[text.length-1]);
         setMessage("");
     };
 
