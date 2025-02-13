@@ -25,7 +25,7 @@ export default function Chat() {
         setUserId(storedUserId);
 
         // Initialize socket with userId
-        const newSocket = io("https://diwash.ddns.net/chat",{
+        const newSocket = io("http://localhost:8001/chat",{
             path: "/socket.io",
             cors: {
                 origin: "*",
@@ -45,12 +45,15 @@ export default function Chat() {
         socket.on("response", handleResponse);
         return () => socket.off("response", handleResponse);
     }, [socket]);
-
+    useEffect(() => {
+        if (!socket) return;
+        if(text[text.length - 1].owner !== "user") return;
+        setIsLoading(true);
+        socket.emit("chat", text[text.length - 1]);
+    }, [text]);
     const handleSend = () => {
         if (!message.trim()) return;
-        setText(prev => [...prev, { owner: userId, text: message }]);
-        setIsLoading(true);
-        socket.emit("chat",text[text.length-1]);
+        setText(prev => [...prev, { owner: "user", text: message }]);
         setMessage("");
     };
 
@@ -61,14 +64,14 @@ export default function Chat() {
                 <div className="space-y-2 sm:space-y-4">
                     {text.map((message, index) => (
                         <div key={index} 
-                             className={`flex ${message.owner === userId ? "justify-end" : "justify-start"}`}> 
+                             className={`flex ${message.owner === "user" ? "justify-end" : "justify-start"}`}> 
                             <div className={`max-w-[85%] sm:max-w-[70%] rounded-lg p-2 sm:p-3 ${
-                                message.owner === userId 
+                                message.owner === "user"
                                     ? "bg-blue-500 text-white" 
                                     : "bg-gray-200 text-gray-800"
                             }`}>
                                 <div className="text-xs sm:text-sm opacity-75 mb-1">
-                                    {message.owner === userId ? 'You' : 'Bot'}
+                                    {message.owner === "user"? 'You' : 'Bot'}
                                 </div>
                                 <div className="break-words text-sm sm:text-base">{message.text}</div>
                             </div>
