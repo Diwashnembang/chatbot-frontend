@@ -15,7 +15,12 @@ export default function Chat() {
     }, [text]);
 
     useEffect(() => {
-        const newSocket = io("http://localhost:8001/chat");
+        const newSocket = io("https://diwash.ddns.net/chat",{
+            path: "/socket.io",
+            cors:{
+                origin: "*",
+            }
+        });
         setSocket(newSocket);
         return () => newSocket?.disconnect();
     }, []);
