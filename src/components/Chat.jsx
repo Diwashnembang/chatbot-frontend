@@ -25,7 +25,7 @@ export default function Chat() {
         setUserId(storedUserId);
 
         // Initialize socket with userId
-        const newSocket = io("http://localhost:8001/chat",{
+        const newSocket = io("https://diwash.ddns.net/chat",{
             path: "/socket.io",
             cors: {
                 origin: "*",
