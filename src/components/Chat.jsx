@@ -25,13 +25,15 @@ export default function Chat() {
         setUserId(storedUserId);
 
         // Initialize socket with userId
-        const newSocket = io("https://diwash.ddns.net/chat",{
+        const newSocket = io("wss://diwash.ddns.net/chat",{
             path: "/socket.io",
             cors: {
                 origin: "*",
             },
-            query: { user_id: storedUserId }
-        });
+            query: { user_id: storedUserId },
+            transports:["websocket"],
+            reconnectionAttempts: Infinity
+        }).off("/chat");
         setSocket(newSocket);
         return () => newSocket?.disconnect();
     }, []);
